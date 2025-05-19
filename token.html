@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Generar Token JWT</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f9f9f9; }
+    input, button { padding: 0.5rem; margin: 0.5rem 0; width: 100%; max-width: 300px; }
+    pre { background: #eee; padding: 1rem; white-space: pre-wrap; word-break: break-word; }
+  </style>
+</head>
+<body>
+  <h1>🔐 Generar Token con sucursal_id</h1>
+
+  <label>Usuario ID:</label>
+  <input type="text" id="usuario_id" placeholder="u123">
+
+  <label>Sucursal ID:</label>
+  <input type="number" id="sucursal_id" placeholder="2">
+
+  <label>Rol (opcional):</label>
+  <input type="text" id="rol" placeholder="admin / cajero / anon">
+
+  <button onclick="generarToken()">Generar Token</button>
+
+  <h3>🔑 Token generado:</h3>
+  <pre id="resultado"></pre>
+
+  <script>
+    async function generarToken() {
+      const usuario_id = document.getElementById("usuario_id").value.trim();
+      const sucursal_id = parseInt(document.getElementById("sucursal_id").value);
+      const rol = document.getElementById("rol").value.trim() || "anon";
+
+      if (!usuario_id || !sucursal_id) {
+        alert("Faltan datos.");
+        return;
+      }
+
+      const res = await fetch("http://localhost:3000/generar-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usuario_id, sucursal_id, rol })
+      });
+
+      const data = await res.json();
+      document.getElementById("resultado").textContent = data.token || JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
